@@ -1,26 +1,37 @@
-import express from "express"
+import express, { urlencoded } from "express"
 import "dotenv/config"
-import { engine } from "express-handlebars"
+import { engine, create } from "express-handlebars"
 import path from "path"
+import { homeRouter } from "./routers/home.js"
+import { authRouter } from "./routers/auth.js"
+import { productRouter } from "./routers/product.js"
+
+
 
 
 let port = process.env.APP_PORT || 4500
 let host = process.env.APP_HOST || "localhost"
 
 
-
+const hbs = create({
+    defaultLayout: "main",
+    extname: "hbs"
+})
 
 async function startTheServer() {
     try {
         const app = express();
+      
+        app.engine('hbs', hbs.engine);
+        app.set('view engine', 'hbs');
+        app.set('views', path.join(process.cwd(), "src", "views"));
 
-        app.engine('handlebars', engine());
-        app.set('view engine', 'handlebars');
-        const __dirname = path.dirname(new URL(import.meta.url).pathname);
-        app.set('views', path.join(__dirname, './views'));
-        app.get('/', (req, res) => {
-            res.render('main');
-        });
+        app.use(express.json())
+        app.use(express.urlencoded({extended: true}))
+        app.use(homeRouter, authRouter, productRouter)
+    
+       
+        
 
         app.listen(port, () => {
             console.log(`Server is running http://${host}:${port}`);
