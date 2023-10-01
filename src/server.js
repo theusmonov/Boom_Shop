@@ -5,6 +5,13 @@ import path from "path"
 import { homeRouter } from "./routers/home.js"
 import { authRouter } from "./routers/auth.js"
 import { productRouter } from "./routers/product.js"
+import dbConnect from "./config/db.connect.js"
+import bodyParser from 'body-parser';
+import flash from "connect-flash"
+import session from "express-session"
+
+
+
 
 
 
@@ -25,11 +32,27 @@ async function startTheServer() {
         app.engine('hbs', hbs.engine);
         app.set('view engine', 'hbs');
         app.set('views', path.join(process.cwd(), "src", "views"));
-
+        app.use(session({
+            secret: 'asad',
+            resave: true,
+            saveUninitialized: true,
+          }))
+        app.use(flash())
         app.use(express.json())
         app.use(express.urlencoded({extended: true}))
+        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(bodyParser.json());
+        app.use(express.static("public"))
         app.use(homeRouter, authRouter, productRouter)
-    
+        
+        await dbConnect()
+        .then(() => {
+           console.log("Db is connected!")
+        })
+        .catch((err) => {
+            console.log(err.message)
+        })
+
        
         
 

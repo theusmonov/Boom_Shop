@@ -1,5 +1,8 @@
 <div class="w-75 mx-auto">
     <p class="fs-1">Tizimga kirish</p>
+    {{#if loginError}}
+     <p>Error</p>
+    {{/if}}
     <form action='/login' method="post">
         <div class="form-floating mb-3">
             <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com">

@@ -1,5 +1,8 @@
 <div class="w-75 mx-auto">
     <p class="fs-1">Ro'yxatdan o'tish</p>
+    {{#if registerError}}
+     <p>Error</p>
+    {{/if}}
     <form action='/register' method="post">
         <div class="d-flex gap-3">
             <div class="form-floating mb-3 w-50">
